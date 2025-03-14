@@ -1,0 +1,44 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "
+             # Simple wait script
+             echo 'Waiting for database to be ready...'
+             while ! python -c 'import MySQLdb; MySQLdb.connect(host=\"db\", user=\"devuser\", password=\"changeme\", database=\"devdb\")' 2>/dev/null; do
+               echo 'Database not ready yet, waiting...'
+               sleep 1
+             done
+             echo 'Database is ready!'
+             
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - dev-db-data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=devdb
+      - MYSQL_USER=devuser
+      - MYSQL_PASSWORD=changeme
+      - MYSQL_ROOT_PASSWORD=rootpassword
+
+volumes:
+  dev-db-data:
