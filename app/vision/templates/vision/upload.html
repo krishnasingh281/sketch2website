@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vision App - Upload Image</title>
+</head>
+<body>
+    <h2>Upload an Image for Text Extraction</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if extracted_text %}
+        <h3>Extracted Text:</h3>
+        <p>{{ extracted_text }}</p>
+    {% endif %}
+</body>
+</html>
