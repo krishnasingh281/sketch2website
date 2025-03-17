@@ -4,3 +4,4 @@ mysqlclient
 pymysql
 pillow
 djangorestframework-simplejwt
+google-cloud-vision
