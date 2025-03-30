@@ -3,11 +3,32 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
-from rest_framework import status
+from rest_framework import status, generics
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from .serializers import UserSeriailzer, RegisterSeriailzer
 
 User = get_user_model()
+
+class RegisterView(generics.CreateAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSeriailzer
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        
+        # No need to create AlumniProfile here - it's handled in the serializer
+        
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'user': UserSeriailzer(user).data,
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 def register_user(request):
@@ -56,7 +77,7 @@ def logout_user(request):
     try:
         refresh_token = request.data["refresh"]
         token = RefreshToken(refresh_token)
-        token.blacklist()  # Blacklist the token
+        token.blacklist() 
 
         return Response({"message": "User logged out successfully"}, status=status.HTTP_200_OK)
     except Exception as e:

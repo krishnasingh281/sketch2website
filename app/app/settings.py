@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'vision',
+    'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
 ]
@@ -55,7 +56,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'app.urls'
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.User'
 
 TEMPLATES = [
     {
@@ -134,6 +135,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

@@ -5,3 +5,4 @@ pymysql
 pillow
 djangorestframework-simplejwt
 google-cloud-vision
+drf-yasg
