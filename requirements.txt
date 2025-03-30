@@ -6,3 +6,4 @@ pillow
 djangorestframework-simplejwt
 google-cloud-vision
 drf-yasg
+python-dotenv

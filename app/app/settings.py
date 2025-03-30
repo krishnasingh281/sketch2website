@@ -157,10 +157,21 @@ SIMPLE_JWT = {
 
 # Google Vision API Key
 
-GOOGLE_APPLICATION_CREDENTIALS = os.path.join(BASE_DIR, "config", "google_vision_key.json")
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
 
 
+import os
+import json
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Parse the JSON string from .env
+google_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+if google_credentials:
+    GOOGLE_APPLICATION_CREDENTIALS = json.loads(google_credentials)
+else:
+    GOOGLE_APPLICATION_CREDENTIALS = None
 
 
 
