@@ -159,20 +159,10 @@ SIMPLE_JWT = {
 
 
 
+# In settings.py
 import os
-import json
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Parse the JSON string from .env
-google_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-if google_credentials:
-    GOOGLE_APPLICATION_CREDENTIALS = json.loads(google_credentials)
-else:
-    GOOGLE_APPLICATION_CREDENTIALS = None
-
-
+# Just use the environment variable directly - no need to parse the JSON
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 
 

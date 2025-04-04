@@ -7,9 +7,11 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/app
+    - ./app:/app
+    - ./google_credentials.json:/app/google_credentials.json:ro
     command: >
       sh -c "
+            mkdir -p /app/media && chmod 777 /app/media &&
              # Simple wait script
              echo 'Waiting for database to be ready...'
              while ! python -c 'import MySQLdb; MySQLdb.connect(host=\"db\", user=\"devuser\", password=\"changeme\", database=\"devdb\")' 2>/dev/null; do
@@ -25,6 +27,7 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/google_credentials.json
     depends_on:
       - db
 

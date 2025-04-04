@@ -24,9 +24,20 @@ RUN python -m venv /py && \
     rm -rf /tmp && \
     apk del .tmp-build-deps && \
     apk add --no-cache bash && \
-    adduser --disabled-password --no-create-home appuser
+    # Create directory for media uploads
+    mkdir -p /app/media && \
+    chmod 777 /app/media && \
+    # Create temporary directory for vision API
+    mkdir -p /tmp/vision_temp && \
+    chmod 777 /tmp/vision_temp && \
+    # Add the non-root user
+    adduser --disabled-password --no-create-home appuser && \
+    # Make sure the app directory is accessible
+    chown -R appuser:appuser /app
 
+# Set a temp directory that appuser can write to
 ENV PATH="/py/bin:$PATH"
+ENV TMPDIR="/tmp/vision_temp"
 
 USER appuser
 
