@@ -7,13 +7,13 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .serializers import UserSeriailzer, RegisterSeriailzer
+from .serializers import UserSeriailzer, RegisterSerializer
 
 User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
-    serializer_class = RegisterSeriailzer
+    serializer_class = RegisterSerializer
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
