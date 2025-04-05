@@ -1,0 +1,32 @@
+<!-- templates/vision/upload.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Upload Wireframe</h2>
+    <p>Upload your wireframe sketch to convert it to HTML and CSS</p>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.image.label_tag }}
+            {{ form.image }}
+            {% if form.image.errors %}
+            <div class="text-danger">
+                {{ form.image.errors }}
+            </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Upload and Process</button>
+    </form>
+    
+    <div class="mt-4">
+        <h4>Instructions:</h4>
+        <ol>
+            <li>Take a clear photo of your wireframe sketch</li>
+            <li>Make sure elements like navigation, buttons, and text areas are clearly visible</li>
+            <li>Upload the image and we'll detect UI elements and generate HTML/CSS</li>
+        </ol>
+    </div>
+</div>
+{% endblock %}

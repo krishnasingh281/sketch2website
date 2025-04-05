@@ -60,6 +60,7 @@ AUTH_USER_MODEL = 'users.User'
 # Add this to your settings.py
 LOGIN_URL = '/users/login/'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
