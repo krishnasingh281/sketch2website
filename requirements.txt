@@ -7,3 +7,6 @@ djangorestframework-simplejwt
 google-cloud-vision
 drf-yasg
 python-dotenv
+requests
+Pillow  # For ImageField
+celery

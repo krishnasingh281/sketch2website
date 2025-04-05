@@ -1,6 +1,10 @@
+# app/vision/urls.py
+
 from django.urls import path
-from .views import upload_image
+from . import views
 
 urlpatterns = [
-    path("upload/", upload_image, name="upload_image"),
+    path('upload/', views.upload_wireframe, name='upload_wireframe'),
+    path('wireframe/<int:pk>/', views.wireframe_detail, name='wireframe_detail'),
+    path('api/upload/', views.api_upload_wireframe, name='api_upload_wireframe'),
 ]

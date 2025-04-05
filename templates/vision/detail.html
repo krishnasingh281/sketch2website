@@ -1,0 +1,83 @@
+<!-- app/templates/vision/detail.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Wireframe Details</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Uploaded Wireframe
+                </div>
+                <div class="card-body">
+                    <img src="{{ wireframe.image.url }}" class="img-fluid" alt="Wireframe Image">
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Processing Status: {{ wireframe.get_status_display }}
+                </div>
+                <div class="card-body">
+                    <p>Uploaded: {{ wireframe.uploaded_at }}</p>
+                    
+                    {% if wireframe.status == 'failed' %}
+                        <div class="alert alert-danger">
+                            Processing failed. Please try again.
+                        </div>
+                    {% endif %}
+                    
+                    {% if wireframe.status == 'completed' %}
+                        <h5>Detected Text:</h5>
+                        <pre class="bg-light p-3">{{ wireframe.detected_elements.full_text }}</pre>
+                        
+                        <h5>Detected UI Elements:</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Text/Name</th>
+                                        <th>Position</th>
+                                        <th>Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for element in wireframe.detected_elements.elements %}
+                                    <tr>
+                                        <td>{{ element.type }}</td>
+                                        <td>{% if element.text %}{{ element.text }}{% else %}{{ element.name }}{% endif %}</td>
+                                        <td>
+                                            {% if element.position %}
+                                                x: {{ element.position.x|floatformat:0 }}, 
+                                                y: {{ element.position.y|floatformat:0 }}
+                                            {% elif element.bounding_box %}
+                                                x: {{ element.bounding_box.x|floatformat:2 }}, 
+                                                y: {{ element.bounding_box.y|floatformat:2 }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if element.width %}
+                                                {{ element.width|floatformat:0 }} x {{ element.height|floatformat:0 }}
+                                            {% elif element.bounding_box %}
+                                                {{ element.bounding_box.width|floatformat:2 }} x {{ element.bounding_box.height|floatformat:2 }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <a href="{% url 'upload_wireframe' %}" class="btn btn-secondary">Upload Another Wireframe</a>
+</div>
+{% endblock %}

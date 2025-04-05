@@ -1,0 +1,23 @@
+<!-- app/templates/vision/upload.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Upload Wireframe</h2>
+    <p>Upload a wireframe image to detect UI elements using Google Cloud Vision API.</p>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.image.label_tag }}
+            {{ form.image }}
+            {% if form.image.errors %}
+                <div class="alert alert-danger">
+                    {{ form.image.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Upload and Process</button>
+    </form>
+</div>
+{% endblock %}

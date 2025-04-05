@@ -1,4 +1,12 @@
-from django import forms
+# app/vision/forms.py
 
-class ImageUploadForm(forms.Form):
-    image = forms.ImageField()
+from django import forms
+from .models import WireframeUpload
+
+class ImageUploadForm(forms.ModelForm):
+    class Meta:
+        model = WireframeUpload
+        fields = ['image']
+        widgets = {
+            'image': forms.FileInput(attrs={'class': 'form-control'})
+        }
