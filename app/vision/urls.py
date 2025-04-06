@@ -1,18 +1,13 @@
-from django.urls import path
-from .views import (
-    WireframeUploadAPIView,
-    wireframe_detail_api,
-    user_wireframes_api
-)
+# app/app/urls.py
+# (Update this path if your URLs are in a different location)
 
-# URL patterns for the wireframe API endpoints
+from django.urls import path
+from . import views
+
 urlpatterns = [
-    # Upload a new wireframe
-    path('api/wireframes/upload/', WireframeUploadAPIView.as_view(), name='wireframe_upload_api'),
-    
-    # Get details of a specific wireframe
-    path('api/wireframes/<int:pk>/', wireframe_detail_api, name='wireframe_detail_api'),
-    
-    # List all wireframes for the current user
-    path('api/wireframes/', user_wireframes_api, name='user_wireframes_api'),
+    path('api/wireframes/', views.WireframeUploadAPIView.as_view(), name='wireframe-upload'),
+    path('api/wireframes/user/', views.user_wireframes_api, name='user-wireframes'),
+    path('api/wireframes/<int:pk>/', views.wireframe_detail_api, name='wireframe-detail'),
+    path('api/wireframes/<int:pk>/code/', views.generate_code_api, name='wireframe-code'),
+    path('api/test-gemini/', views.test_gemini_connection_api, name='test-gemini'),
 ]
