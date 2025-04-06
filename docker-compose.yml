@@ -28,8 +28,11 @@ services:
       - DB_USER=devuser
       - DB_PASS=changeme
       - GOOGLE_APPLICATION_CREDENTIALS=/app/google_credentials.json
+      - GOOGLE_GEMINI_API_KEY=AIzaSyDy83w_wfF1cqv57rLnoKex4yNgREoQeYY
     depends_on:
       - db
+    env_file:
+      - .env
 
   db:
     image: mysql:8.0
