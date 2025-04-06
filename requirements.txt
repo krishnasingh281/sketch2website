@@ -10,3 +10,5 @@ python-dotenv
 requests
 Pillow  # For ImageField
 celery
+google-generativeai
+jsbeautifier
