@@ -1,0 +1,65 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        - DEV=false
+    restart: always
+    volumes:
+      - static-data:/vol/web
+      - ./app/media:/app/media
+      - ./google_credentials.json:/app/google_credentials.json:ro
+    environment:
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/google_credentials.json
+      - GOOGLE_GEMINI_API_KEY=${GOOGLE_GEMINI_API_KEY}
+    depends_on:
+      - db
+    command: >
+      sh -c "
+             # Wait for database to be ready
+             echo 'Waiting for database to be ready...'
+             while ! python -c \"import MySQLdb; MySQLdb.connect(host='$DB_HOST', user='$DB_USER', password='$DB_PASS', database='$DB_NAME')\" 2>/dev/null; do
+               echo 'Database not ready yet, waiting...'
+               sleep 1
+             done
+             echo 'Database is ready!'
+             
+             python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             uwsgi --socket :8000 --workers 4 --master --enable-threads --module app.wsgi"
+
+  db:
+    image: mysql:8.0
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+
+  proxy:
+    build:
+      context: ./proxy
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - static-data:/vol/web
+      - ./proxy/certs:/etc/nginx/certs:ro
+      - ./app/media:/vol/media
+
+volumes:
+  mysql-data:
+  static-data:
