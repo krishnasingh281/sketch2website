@@ -7,9 +7,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-    - ./app:/app
-    - ./app/media:/app/media
-    - ./google_credentials.json:/app/google_credentials.json:ro
+      - ./app:/app
+      - ./app/media:/app/media
+      - ./google_credentials.json:/app/google_credentials.json:ro
     command: >
       sh -c "
              # Simple wait script
@@ -28,7 +28,7 @@ services:
       - DB_USER=devuser
       - DB_PASS=changeme
       - GOOGLE_APPLICATION_CREDENTIALS=/app/google_credentials.json
-      - GOOGLE_GEMINI_API_KEY=AIzaSyDy83w_wfF1cqv57rLnoKex4yNgREoQeYY
+      - GOOGLE_GEMINI_API_KEY=${GOOGLE_GEMINI_API_KEY}
     depends_on:
       - db
     env_file:
