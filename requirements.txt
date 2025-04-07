@@ -12,3 +12,4 @@ Pillow  # For ImageField
 celery
 google-generativeai
 jsbeautifier
+uwsgi>=2.0.19,<2.1
