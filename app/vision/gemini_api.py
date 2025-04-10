@@ -207,29 +207,18 @@ def construct_gemini_prompt(detected_elements):
     ```
     
     Please generate:
-      1. Clean, semantic HTML5 code using appropriate tags (<header>, <nav>, <main>, <section>, <footer>, etc.)
-      2. Modern CSS using Flexbox or Grid for layout and responsive design
-      3. Any necessary JavaScript for interactive elements, including dark mode toggle
-
+    1. Clean, semantic HTML5 code using appropriate tags (header, nav, main, section, footer, etc.)
+    2. Modern CSS using Flexbox or Grid for layout and responsive design
+    3. Any necessary JavaScript for interactive elements
+    
     Follow these guidelines:
-      - Create a responsive layout that works on mobile and desktop
-      - Position elements according to their relative positions in the wireframe or provided layout
-      - Match text content exactly where appropriate
-      - Use semantic HTML5 elements and follow accessibility best practices (e.g., ARIA roles, labels)
-      - Add appropriate validation for form fields (both HTML5 and JS if needed)
-      - Use modern CSS techniques:
-      - CSS variables for theming
-      - Flexbox and/or Grid for layout
-      - Mobile-first media queries
-      - Smooth transitions for interactive elements
-
-    Additional Requirement:
-      - Implement a Dark Mode toggle using CSS variables and JavaScript
-      - Use a button or switch for toggling
-      - Store user preference using localStorage
-      - Ensure smooth transitions between light and dark themes
-
-
+    - Create a responsive layout that works on mobile and desktop
+    - Position elements according to their relative positions in the wireframe
+    - Match text content exactly where appropriate
+    - Use semantic HTML5 elements and follow accessibility best practices
+    - Add appropriate validation for form fields
+    - Use modern CSS techniques (variables, flexbox, grid)
+    
     Return your response in the following format:
     
     HTML:
