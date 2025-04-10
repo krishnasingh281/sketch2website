@@ -12,4 +12,6 @@ Pillow  # For ImageField
 celery
 google-generativeai
 jsbeautifier
+django-cors-headers
+django-environ
 uwsgi>=2.0.19,<2.1
