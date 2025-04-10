@@ -60,7 +60,7 @@ services:
     depends_on:
       - app
     ports:
-      - 8000:8000  # Changed from 80:8000 to avoid port conflict
+      - 80:8000  # Changed from 80:8000 to avoid port conflict
     volumes:
       - static-data:/vol/web
       - media-data:/vol/media
