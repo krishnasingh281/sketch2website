@@ -7,8 +7,9 @@ services:
     restart: always
     volumes:
       - static-data:/vol/web
-      - ./app/media:/app/media
+      - media-data:/app/media
       - ./google_credentials.json:/app/google_credentials.json:ro
+      - app-logs:/app/logs
     environment:
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
@@ -19,25 +20,24 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/google_credentials.json
       - GOOGLE_GEMINI_API_KEY=${GOOGLE_GEMINI_API_KEY}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     command: >
       sh -c "
-             # Wait for database to be ready
-             echo 'Waiting for database to be ready...'
-             while ! python -c \"import MySQLdb; MySQLdb.connect(host='$DB_HOST', user='$DB_USER', password='$DB_PASS', database='$DB_NAME')\" 2>/dev/null; do
-               echo 'Database not ready yet, waiting...'
-               sleep 1
-             done
-             echo 'Database is ready!'
-             
-             python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             uwsgi --socket :8000 --workers 4 --master --enable-threads --module app.wsgi"
+         echo 'Waiting for database to be ready...'
+         while ! python -c 'import MySQLdb; MySQLdb.connect(host=\"db\", user=\"${DB_USER}\", password=\"${DB_PASS}\", database=\"${DB_NAME}\")' 2>/dev/null; do
+           echo 'Database not ready yet, waiting...'
+           sleep 1
+         done
+         echo 'Database is ready!'
+         
+         python manage.py migrate &&
+         python manage.py collectstatic --noinput &&
+         uwsgi --socket :9000 --workers 4 --master --enable-threads --module app.wsgi"
 
   db:
     image: mysql:8.0
     restart: always
-    command: --default-authentication-plugin=mysql_native_password
     volumes:
       - mysql-data:/var/lib/mysql
     environment:
@@ -45,6 +45,13 @@ services:
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASS}
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    command: --default-authentication-plugin=mysql_native_password --innodb-flush-method=O_DSYNC --innodb-use-native-aio=0
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USER}", "-p${DB_PASS}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
 
   proxy:
     build:
@@ -53,13 +60,13 @@ services:
     depends_on:
       - app
     ports:
-      - 80:80
-      - 443:443
+      - 8000:8000  # Changed from 80:8000 to avoid port conflict
     volumes:
       - static-data:/vol/web
-      - ./proxy/certs:/etc/nginx/certs:ro
-      - ./app/media:/vol/media
+      - media-data:/vol/media
 
 volumes:
   mysql-data:
   static-data:
+  media-data:
+  app-logs:
