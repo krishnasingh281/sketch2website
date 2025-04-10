@@ -37,7 +37,7 @@ services:
   db:
     image: mysql:8.0
     restart: always
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password --innodb-flush-method=O_DSYNC --innodb-use-native-aio=0
     volumes:
       - dev-db-data:/var/lib/mysql
     environment:
@@ -45,6 +45,12 @@ services:
       - MYSQL_USER=devuser
       - MYSQL_PASSWORD=changeme
       - MYSQL_ROOT_PASSWORD=rootpassword
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-udevuser", "-pchangeme"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
 
 volumes:
   dev-db-data:
