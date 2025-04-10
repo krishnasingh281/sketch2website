@@ -1,4 +1,4 @@
-FROM python:3.9-alpine3.13
+FROM python:3.9-alpine3.18
 LABEL maintainer="local01.com"
 
 ENV PYTHONUNBUFFERED=1
@@ -8,7 +8,7 @@ COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 COPY ./scripts /scripts
 COPY ./app /app
 WORKDIR /app
-EXPOSE 8000
+EXPOSE 9000
 
 ARG DEV=false
 
@@ -24,17 +24,23 @@ RUN python -m venv /py && \
     rm -rf /tmp && \
     apk del .tmp-build-deps && \
     apk add --no-cache bash && \
-    # Create directory for media uploads
+    # Create directories with correct permissions
     mkdir -p /app/media && \
+    mkdir -p /app/logs && \
+    mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/media && \
     chmod 755 /app/media && \
+    chmod 755 /app/logs && \
+    chmod -R 755 /vol/web && \
     # Create temporary directory for vision API
     mkdir -p /tmp/vision_temp && \
     chmod 755 /tmp/vision_temp && \
     # Add the non-root user
     adduser --disabled-password --no-create-home appuser && \
     chmod -R +x /scripts && \
-    # Make sure the app directory is accessible
+    # Make sure all directories are accessible
     chown -R appuser:appuser /app && \
+    chown -R appuser:appuser /vol/web && \
     chown -R appuser:appuser /tmp/vision_temp
 
 # Set a temp directory that appuser can write to
