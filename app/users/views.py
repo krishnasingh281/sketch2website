@@ -7,7 +7,7 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .serializers import UserSeriailzer, RegisterSerializer
+from .serializers import UserSeriailzer, RegisterSerializer, LoginSerializer
 
 User = get_user_model()
 
@@ -51,25 +51,27 @@ def register_user(request):
     return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST'])
-def login_user(request):
-    data = request.data
-    username_or_email = data.get('username')  # This can be username or email
-    password = data.get('password')
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
 
-    # Find user by username or email
-    user = User.objects.filter(username=username_or_email).first() or User.objects.filter(email=username_or_email).first()
 
-    if user and user.check_password(password):
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        user = serializer.validated_data['user']
         refresh = RefreshToken.for_user(user)
+        
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }, status=status.HTTP_200_OK)
-
-    return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
 
 
 @api_view(['POST'])
