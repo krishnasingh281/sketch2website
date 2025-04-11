@@ -1,6 +1,6 @@
 server {
-    listen ${LISTEN_PORT};
-    server_name _;  # Accept all hostnames
+    listen 80;
+
 
     location /static {
         alias /vol/web/static;
