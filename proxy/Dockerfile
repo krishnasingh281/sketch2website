@@ -26,4 +26,4 @@ VOLUME /vol/media
 
 USER nginx
 
-CMD ["/run.sh"]
+CMD ["sh",  "/run.sh"]

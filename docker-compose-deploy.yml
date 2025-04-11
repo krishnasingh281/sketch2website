@@ -2,8 +2,6 @@ services:
   app:
     build:
       context: .
-      args:
-        - DEV=false
     restart: always
     volumes:
       - static-data:/vol/web
@@ -60,7 +58,7 @@ services:
     depends_on:
       - app
     ports:
-      - 80:80
+      - 80:8000
     volumes:
       - static-data:/vol/web
       - media-data:/vol/media
