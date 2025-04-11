@@ -60,7 +60,7 @@ services:
     depends_on:
       - app
     ports:
-      - 80:8000  
+      - 80:80
     volumes:
       - static-data:/vol/web
       - media-data:/vol/media
