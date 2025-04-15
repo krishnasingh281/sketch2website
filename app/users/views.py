@@ -59,23 +59,27 @@ from rest_framework.permissions import AllowAny
 
 
 class LoginView(generics.GenericAPIView):
+    permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
-    permission_classes = [AllowAny]
-    throttle_classes = [AnonRateThrottle]  # Add rate limiting for security
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        user = serializer.validated_data['user']
-        refresh = RefreshToken.for_user(user)
-        
-        return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'user_id': user.id,
-            'email': user.email
-        }, status=status.HTTP_200_OK)
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data["user"]
+            tokens = RefreshToken.for_user(user)
+            return Response({
+                "refresh": str(tokens),
+                "access": str(tokens.access_token),
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "role": user.role
+                }
+            })
+        else:
+            print("🚨 Validation Errors:", serializer.errors)  # Debugging
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def logout_user(request):
