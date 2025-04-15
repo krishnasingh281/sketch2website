@@ -215,7 +215,7 @@ def construct_gemini_prompt(detected_elements):
         'navbar', 'button', 'input_field', 'heading', 'paragraph', 'image', 'form'
     ]]
     
-    # Build enhanced prompt optimized for flash model with better color direction
+    # Build enhanced prompt optimized for flash model with stronger color directives
     prompt = f"""
     As an expert front-end developer, generate clean, responsive HTML, CSS, and JavaScript code based on these wireframe elements.
     
@@ -278,17 +278,24 @@ def construct_gemini_prompt(detected_elements):
     9. Use modern ES6+ JavaScript syntax
     10. Create pixel-perfect implementation of the wireframe
     
-    VISUAL DESIGN REQUIREMENTS:
-    1. DO NOT use a plain white background. Use a modern color palette with appropriate contrast.
-    2. Use a vibrant primary color for key UI elements (such as #3366FF, #FF5722, or #00BCD4)
-    3. Create a balanced color scheme with complementary accent colors
-    4. Add subtle gradients, shadows, or borders for depth
-    5. Use color to emphasize interactive elements
-    6. Implement consistent padding and spacing (16px or 24px recommended for sections)
-    7. Apply text color that maintains WCAG contrast standards (not pure black)
-    8. Add subtle hover effects for all interactive elements
-    9. Use modern rounded corners for containers and buttons (4-8px radius)
-    10. Include subtle background patterns or texture where appropriate
+    COLOR REQUIREMENTS - CRITICAL:
+    1. MANDATORY: DO NOT use a white background anywhere in the design
+    2. MANDATORY: Apply a colored background to the page body and all major containers (minimum #f0f0f0 or darker)
+    3. MANDATORY: Use a vibrant primary color for key UI elements (choose one: #3366FF, #FF5722, #00BCD4, or #4CAF50)
+    4. MANDATORY: Include at least one complementary accent color for secondary elements
+    5. MANDATORY: Add subtle gradients or shadows to create depth and visual interest
+    6. MANDATORY: Use distinct background colors for different sections to create visual separation
+    7. MANDATORY: Apply text colors with proper contrast against their backgrounds (not black-on-white)
+    8. MANDATORY: Add colored hover effects for all interactive elements (links, buttons)
+    9. MANDATORY: Use color to visually group related elements
+    10. MANDATORY: Include at least 5 different colors in your palette (including background colors)
+    
+    DESIGN ELEMENTS:
+    1. Use modern rounded corners for containers and buttons (4-8px radius)
+    2. Apply consistent padding (minimum 16px) within containers
+    3. Add subtle border or shadow effects to distinguish elements
+    4. Implement proper spacing between sections (24-32px minimum)
+    5. Ensure all interactive elements have clear hover and active states
     
     OUTPUT FORMAT:
     Return ONLY code blocks with no explanations outside the blocks:
