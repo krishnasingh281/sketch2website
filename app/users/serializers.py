@@ -39,23 +39,31 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
     
-class LoginSerializer(serializers.ModelSerializer):
+class LoginSerializer(serializers.Serializer):  # Changed to Serializer since we're not using model fields
     email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ('email', 'password')
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'})
 
     def validate(self, attrs):
         email = attrs.get('email')
         password = attrs.get('password')
         
         if email and password:
-            user = authenticate(username=email, password=password)
-            if not user:
+            # Get the user first by email
+            try:
+                user = User.objects.get(email=email)
+                # Then authenticate with username and password
+                authenticated_user = authenticate(username=user.username, password=password)
+                if authenticated_user is None:
+                    # Use a generic error message for security
+                    raise serializers.ValidationError('Invalid credentials')
+                
+                if not authenticated_user.is_active:
+                    raise serializers.ValidationError('User account is disabled')
+                
+                attrs['user'] = authenticated_user
+                return attrs
+            except User.DoesNotExist:
+                # Same generic error to prevent email enumeration
                 raise serializers.ValidationError('Invalid credentials')
-            attrs['user'] = user
-            return attrs
         else:
-            raise serializers.ValidationError('Must include "email" and "password".')
+            raise serializers.ValidationError('Must include "email" and "password"')

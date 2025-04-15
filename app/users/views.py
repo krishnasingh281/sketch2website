@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from rest_framework import status, generics
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -60,6 +61,7 @@ from rest_framework.permissions import AllowAny
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle]  # Add rate limiting for security
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -71,8 +73,9 @@ class LoginView(generics.GenericAPIView):
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token),
+            'user_id': user.id,
+            'email': user.email
         }, status=status.HTTP_200_OK)
-
 
 @api_view(['POST'])
 def logout_user(request):
