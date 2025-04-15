@@ -73,8 +73,7 @@ class LoginView(generics.GenericAPIView):
                 "user": {
                     "id": user.id,
                     "username": user.username,
-                    "email": user.email,
-                    "role": user.role
+                    "email": user.email
                 }
             })
         else:
