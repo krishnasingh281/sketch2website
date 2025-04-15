@@ -215,7 +215,7 @@ def construct_gemini_prompt(detected_elements):
         'navbar', 'button', 'input_field', 'heading', 'paragraph', 'image', 'form'
     ]]
     
-    # Build enhanced prompt optimized for flash model
+    # Build enhanced prompt optimized for flash model with better color direction
     prompt = f"""
     As an expert front-end developer, generate clean, responsive HTML, CSS, and JavaScript code based on these wireframe elements.
     
@@ -270,13 +270,25 @@ def construct_gemini_prompt(detected_elements):
     1. Use semantic HTML5 (header, nav, main, section, footer, etc.)
     2. Create responsive design with CSS Grid and Flexbox
     3. Add clean, modern styling with consistent spacing
-    4. Include proper form validation with JavaScript 
+    4. Include proper form validation with JavaScript
     5. Add hover states and transitions for interactive elements
     6. Ensure mobile compatibility with media queries
-    7. Use CSS variables for consistent theming
+    7. Use CSS variables for a cohesive color scheme
     8. Add appropriate accessibility attributes
     9. Use modern ES6+ JavaScript syntax
     10. Create pixel-perfect implementation of the wireframe
+    
+    VISUAL DESIGN REQUIREMENTS:
+    1. DO NOT use a plain white background. Use a modern color palette with appropriate contrast.
+    2. Use a vibrant primary color for key UI elements (such as #3366FF, #FF5722, or #00BCD4)
+    3. Create a balanced color scheme with complementary accent colors
+    4. Add subtle gradients, shadows, or borders for depth
+    5. Use color to emphasize interactive elements
+    6. Implement consistent padding and spacing (16px or 24px recommended for sections)
+    7. Apply text color that maintains WCAG contrast standards (not pure black)
+    8. Add subtle hover effects for all interactive elements
+    9. Use modern rounded corners for containers and buttons (4-8px radius)
+    10. Include subtle background patterns or texture where appropriate
     
     OUTPUT FORMAT:
     Return ONLY code blocks with no explanations outside the blocks:
