@@ -14,8 +14,10 @@ USER root
 RUN apk add --no-cache dos2unix && \
     mkdir -p /vol/static && \
     mkdir -p /vol/media && \
+    mkdir -p /etc/nginx/ssl && \
     chmod 755 /vol/static && \
     chmod 755 /vol/media && \
+    chmod 755 /etc/nginx/ssl && \
     touch /etc/nginx/conf.d/default.conf && \
     chown nginx:nginx /etc/nginx/conf.d/default.conf && \
     dos2unix /run.sh && \
@@ -23,6 +25,7 @@ RUN apk add --no-cache dos2unix && \
 
 VOLUME /vol/static
 VOLUME /vol/media
+VOLUME /etc/nginx/ssl
 
 USER nginx
 
