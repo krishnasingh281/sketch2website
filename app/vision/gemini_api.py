@@ -91,12 +91,13 @@ def test_gemini_connection():
                 logger.error(f"Failed to connect to Gemini API after {max_retries} attempts")
                 return {"status": "error", "message": f"Connection failed: {str(e)}"}
 
-def generate_code_from_wireframe(detected_elements):
+def generate_code_from_wireframe(detected_elements, theme="dark"):
     """
     Uses Google's Gemini API to generate HTML/CSS code from detected wireframe elements.
     
     Args:
         detected_elements (dict): The structured data from Vision API containing UI elements
+        theme (str): The theme to use for the generated code ('dark' or 'light', default is 'dark')
         
     Returns:
         dict: Contains the generated HTML and CSS code, or error information
@@ -114,8 +115,8 @@ def generate_code_from_wireframe(detected_elements):
         model = genai.GenerativeModel(model_name="gemini-2.0-flash")
 
         
-        # Prepare the prompt with the detected elements
-        prompt = construct_gemini_prompt(detected_elements)
+        # Prepare the prompt with the detected elements and specified theme
+        prompt = construct_gemini_prompt(detected_elements, theme)
         
         # Generate response from Gemini
         response = model.generate_content(prompt)
@@ -143,12 +144,13 @@ def generate_code_from_wireframe(detected_elements):
             'message': str(e)
         }
 
-def construct_gemini_prompt(detected_elements):
+def construct_gemini_prompt(detected_elements, theme="dark"):
     """
     Constructs an effective prompt for Gemini to generate code from wireframe elements.
     
     Args:
         detected_elements (dict): The structured data from Vision API
+        theme (str): The theme to use for the generated code ('dark' or 'light')
         
     Returns:
         str: A well-structured prompt for the Gemini API
@@ -165,9 +167,79 @@ def construct_gemini_prompt(detected_elements):
     paragraphs = [e for e in elements if e.get('type') == 'paragraph']
     other_elements = [e for e in elements if e.get('type') not in ['navbar', 'button', 'input_field', 'heading', 'paragraph']]
     
+    # Dark theme color palette
+    dark_theme_css = """
+    /* Dark Theme Variables */
+    :root {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --bg-tertiary: #2c2c2c;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a9b1;
+      --accent-color: #4da3ff;
+      --border-color: #444;
+      --success-color: #4caf50;
+      --warning-color: #ff9800;
+      --error-color: #f44336;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Base dark theme styles */
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+    
+    /* Dark theme component styling examples */
+    .card, .panel, .container-dark {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px var(--shadow-color);
+    }
+    
+    button, .btn {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+    
+    button:hover, .btn:hover {
+      background-color: var(--accent-color);
+    }
+    
+    input, select, textarea {
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+    """
+    
+    # Light theme color palette (for reference if needed)
+    light_theme_css = """
+    /* Light Theme Variables */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-tertiary: #e9ecef;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --accent-color: #007bff;
+      --border-color: #dee2e6;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --error-color: #dc3545;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+    """
+    
+    # Choose theme based on parameter
+    theme_css = dark_theme_css if theme == "dark" else light_theme_css
+    theme_name = "dark" if theme == "dark" else "light"
     
     prompt = f"""
-    As an expert web developer, generate responsive HTML, CSS, and JavaScript code based on these wireframe elements detected from an image.
+    As an expert web developer, generate responsive HTML, CSS, and JavaScript code based on these wireframe elements detected from an image. 
+    
+    IMPORTANT: Create a {theme_name} themed website with sleek, modern aesthetics.
     
     Here's the full text detected in the wireframe:
     ```
@@ -210,6 +282,7 @@ def construct_gemini_prompt(detected_elements):
     1. Create a fully functional, modern website implementation of the wireframe.
     2. Generate pixel-perfect, professional code with excellent design sensibility.
     3. Use the latest front-end best practices.
+    4. IMPORTANT: Implement a {theme_name} theme with appropriate colors and contrast.
     
     # CODE SPECIFICATIONS
     
@@ -221,14 +294,18 @@ def construct_gemini_prompt(detected_elements):
     - Create properly labeled form elements with proper validation attributes
     
     ## CSS
-    - Use modern CSS with variables for consistent theming
+    - Use the following {theme_name} theme color scheme as a starting point:
+    
+    {theme_css}
+    
     - Implement responsive design with mobile-first approach
     - Use CSS Grid and Flexbox for layouts
     - Include media queries for different screen sizes
     - Add subtle animations and transitions where appropriate
-    - Use a cohesive color scheme derived from the wireframe
     - Implement appropriate spacing using consistent padding/margin system
     - Add hover states and focus states for interactive elements
+    - Ensure good contrast ratios for accessibility
+    - Add subtle depth with box-shadows and subtle gradients when appropriate
     
     ## JavaScript
     - Implement form validation
